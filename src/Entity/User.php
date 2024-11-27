@@ -57,6 +57,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private $apiToken;
 
+    //one user can be the admin of many companies and many companies can have many admins
+    #[ORM\ManyToMany(targetEntity: Company::class, inversedBy: 'admins', cascade: ["persist"])]
+    #[ORM\JoinTable(name: 'company_admins')]
+    #[ORM\JoinColumn(name: 'company_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private $companies;
+
+    public function __construct()
+    {
+        $this->companies = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -230,6 +242,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiToken($apiToken): void
     {
         $this->apiToken = $apiToken;
+    }
+
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
+    }
+
+    public function addCompany(Company $company): self
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies[] = $company;
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Company $company): self
+    {
+        $this->companies->removeElement($company);
+
+        return $this;
     }
 
 
