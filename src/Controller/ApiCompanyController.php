@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Controller\dto\CompanyDto;
 use App\Entity\Company;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -57,17 +58,31 @@ class ApiCompanyController extends AbstractController
         $company->setEmail($jsonData['email']);
         $company->setPhoneNumber($jsonData['phoneNumber']);
         $company->addAdmin($this->getUser());
+        $this->getUser()->addCompany($company);
 
         $em = $doctrine->getManager();
         $em->persist($company);
+        $em->persist($this->getUser());
         $em->flush();
 
-        $entityManager = $doctrine->getManager();
-        $entityManager->persist($company);
-        $entityManager->flush();
 
         return $this->json([
             'message' => 'Company created'
         ]);
+    }
+
+    #[Route('/api/protected/get-my-companies', name: 'api_get_companies', methods: ['GET'])]
+    public function getCompanies(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $companies = $this->getUser()->getCompanies();
+
+        $companiesAsDto = [];
+        foreach ($companies as $company) {
+            $companiesAsDto[] = new CompanyDto($company);
+        }
+
+        return $this->json(
+            $companiesAsDto
+        );
     }
 }

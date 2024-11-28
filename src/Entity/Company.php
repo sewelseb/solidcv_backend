@@ -39,7 +39,7 @@ class Company
     private ?string $email = null;
 
     //one user can be the admin of many companies and many companies can have many admins
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'companies')]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'companies', cascade: ["persist"])]
     private $admins;
 
     public function getId(): ?int
