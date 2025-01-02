@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Controller\dto\EducationInstitutionDto;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -60,13 +61,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     //one user can be the admin of many companies and many companies can have many admins
     #[ORM\ManyToMany(targetEntity: Company::class, inversedBy: 'admins', cascade: ["persist"])]
     #[ORM\JoinTable(name: 'company_admins')]
-    #[ORM\JoinColumn(name: 'company_id', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private $companies;
+
+    #[ORM\ManyToMany(targetEntity: EducationInstitution::class, inversedBy: 'admins', cascade: ["persist"])]
+    #[ORM\JoinTable(name: 'education_institution_admins')]
+    private $educationInstitutions;
+
+    #[ORM\ManyToMany(targetEntity: Company::class, inversedBy: 'employees', cascade: ["persist"])]
+    #[ORM\JoinTable(name: 'company_employees')]
+    private $workExperiences;
 
     public function __construct()
     {
         $this->companies = new ArrayCollection();
+        $this->educationInstitutions = new ArrayCollection();
+        $this->workExperiences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -251,6 +260,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addCompany(Company $company): self
     {
+        if($this->companies === null) {
+            $this->companies = new ArrayCollection();
+        }
         if (!$this->companies->contains($company)) {
             $this->companies[] = $company;
         }
@@ -264,6 +276,67 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getWorkExperiences(): Collection
+    {
+        return $this->workExperiences;
+    }
+
+    public function addWorkExperience(Company $company): self
+    {
+        if (!$this->workExperiences->contains($company)) {
+            $this->workExperiences[] = $company;
+        }
+
+        return $this;
+    }
+
+    public function removeWorkExperience(Company $company): self
+    {
+        $this->workExperiences->removeElement($company);
+
+        return $this;
+    }
+
+    public function getEducationInstitutions(): Collection
+    {
+        return $this->educationInstitutions;
+    }
+
+    public function setCompanies(ArrayCollection $companies): void
+    {
+        $this->companies = $companies;
+    }
+
+    /**
+     * @param mixed $educationInstitutions
+     */
+    public function setEducationInstitutions($educationInstitutions): void
+    {
+        $this->educationInstitutions = $educationInstitutions;
+    }
+
+    public function setWorkExperiences(ArrayCollection $workExperiences): void
+    {
+        $this->workExperiences = $workExperiences;
+    }
+
+    public function addEducationInstitution(EducationInstitution $educationInstitution): self
+    {
+        if (!$this->educationInstitutions->contains($educationInstitution)) {
+            $this->educationInstitutions[] = $educationInstitution;
+        }
+
+        return $this;
+    }
+
+    public function removeEducationInstitution(EducationInstitution $educationInstitution): self
+    {
+        $this->educationInstitutions->removeElement($educationInstitution);
+
+        return $this;
+    }
+
 
 
 

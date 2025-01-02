@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\CompanyRepository;
+use App\Repository\EducationInstitutionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CompanyRepository::class)]
-class Company
+#[ORM\Entity(repositoryClass: EducationInstitutionRepository::class)]
+class EducationInstitution
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -39,11 +39,8 @@ class Company
     private ?string $email = null;
 
     //one user can be the admin of many companies and many companies can have many admins
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'companies')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'educationInstitutions')]
     private $admins;
-
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'workExperiences')]
-    private $employees;
 
     public function getId(): ?int
     {
@@ -55,11 +52,9 @@ class Company
         return $this->name;
     }
 
-    public function setName(?string $name): static
+    public function setName(?string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
     public function getAddressStreet(): ?string
@@ -67,11 +62,9 @@ class Company
         return $this->addressStreet;
     }
 
-    public function setAddressStreet(?string $addressStreet): static
+    public function setAddressStreet(?string $addressStreet): void
     {
         $this->addressStreet = $addressStreet;
-
-        return $this;
     }
 
     public function getAddressNumber(): ?string
@@ -79,11 +72,9 @@ class Company
         return $this->addressNumber;
     }
 
-    public function setAddressNumber(?string $addressNumber): static
+    public function setAddressNumber(?string $addressNumber): void
     {
         $this->addressNumber = $addressNumber;
-
-        return $this;
     }
 
     public function getAddressCity(): ?string
@@ -91,11 +82,9 @@ class Company
         return $this->addressCity;
     }
 
-    public function setAddressCity(?string $addressCity): static
+    public function setAddressCity(?string $addressCity): void
     {
         $this->addressCity = $addressCity;
-
-        return $this;
     }
 
     public function getAddressZipCode(): ?string
@@ -103,11 +92,9 @@ class Company
         return $this->addressZipCode;
     }
 
-    public function setAddressZipCode(?string $addressZipCode): static
+    public function setAddressZipCode(?string $addressZipCode): void
     {
         $this->addressZipCode = $addressZipCode;
-
-        return $this;
     }
 
     public function getAddressCountry(): ?string
@@ -115,11 +102,9 @@ class Company
         return $this->addressCountry;
     }
 
-    public function setAddressCountry(?string $addressCountry): static
+    public function setAddressCountry(?string $addressCountry): void
     {
         $this->addressCountry = $addressCountry;
-
-        return $this;
     }
 
     public function getPhoneNumber(): ?string
@@ -127,11 +112,9 @@ class Company
         return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(?string $phoneNumber): static
+    public function setPhoneNumber(?string $phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
-
-        return $this;
     }
 
     public function getEmail(): ?string
@@ -139,11 +122,9 @@ class Company
         return $this->email;
     }
 
-    public function setEmail(?string $email): static
+    public function setEmail(?string $email): void
     {
         $this->email = $email;
-
-        return $this;
     }
 
     /**
@@ -162,58 +143,19 @@ class Company
         $this->admins = $admins;
     }
 
-    public function addAdmin($user): static
+    public function addAdmin(User $user): void
     {
-        if($this->admins === null) {
+        if($this->getAdmins() == null) {
             $this->admins = new ArrayCollection();
         }
-        if (!$this->admins->contains($user)) {
-            $this->admins[] = $user;
+        if ($this->admins->contains($user)) {
+            return;
         }
-
-        return $this;
+        $this->admins[] = $user;
     }
 
-    public function removeAdmin(User $user): static
+    public function removeAdmin(User $user): void
     {
         $this->admins->removeElement($user);
-
-        return $this;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getEmployees()
-    {
-        return $this->employees;
-    }
-
-    /**
-     * @param mixed $employees
-     */
-    public function setEmployees($employees): void
-    {
-        $this->employees = $employees;
-    }
-
-    public function addEmployee(User $user): static
-    {
-        if($this->employees === null) {
-            $this->employees = new ArrayCollection();
-        }
-        if (!$this->employees->contains($user)) {
-            $this->employees[] = $user;
-        }
-
-        return $this;
-    }
-
-    public function removeEmployee(User $user): static
-    {
-        $this->employees->removeElement($user);
-
-        return $this;
-    }
-
 }

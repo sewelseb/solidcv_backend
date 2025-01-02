@@ -20,9 +20,9 @@ class ApiCompanyController extends AbstractController
         //get company by id
         $company = $doctrine->getRepository(Company::class)->find($id);
 
-        return $this->json([
-            $company
-        ]);
+        return $this->json(
+            new CompanyDto($company)
+        );
     }
 
     /*#[Route('/api/protected/update-company', name: 'api_update_company', methods: ['POST'])]
