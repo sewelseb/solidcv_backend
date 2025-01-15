@@ -67,15 +67,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinTable(name: 'education_institution_admins')]
     private $educationInstitutions;
 
-    #[ORM\ManyToMany(targetEntity: Company::class, inversedBy: 'employees', cascade: ["persist"])]
-    #[ORM\JoinTable(name: 'company_employees')]
-    private $workExperiences;
+
+    #[ORM\OneToMany(targetEntity: ExperienceRecord::class, mappedBy: 'user')]
+    private $experienceRecords;
+
 
     public function __construct()
     {
         $this->companies = new ArrayCollection();
         $this->educationInstitutions = new ArrayCollection();
-        $this->workExperiences = new ArrayCollection();
+        $this->experienceRecords = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -277,26 +278,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getWorkExperiences(): Collection
-    {
-        return $this->workExperiences;
-    }
-
-    public function addWorkExperience(Company $company): self
-    {
-        if (!$this->workExperiences->contains($company)) {
-            $this->workExperiences[] = $company;
-        }
-
-        return $this;
-    }
-
-    public function removeWorkExperience(Company $company): self
-    {
-        $this->workExperiences->removeElement($company);
-
-        return $this;
-    }
 
     public function getEducationInstitutions(): Collection
     {
@@ -316,10 +297,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->educationInstitutions = $educationInstitutions;
     }
 
-    public function setWorkExperiences(ArrayCollection $workExperiences): void
-    {
-        $this->workExperiences = $workExperiences;
-    }
+
 
     public function addEducationInstitution(EducationInstitution $educationInstitution): self
     {
@@ -337,7 +315,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getExperienceRecords(): Collection
+    {
+        return $this->experienceRecords;
+    }
 
+    public function addExperienceRecord(ExperienceRecord $experienceRecord): self
+    {
+        if (!$this->experienceRecords->contains($experienceRecord)) {
+            $this->experienceRecords[] = $experienceRecord;
+            $experienceRecord->setUser($this);
+        }
+
+        return $this;
+    }
 
 
 }

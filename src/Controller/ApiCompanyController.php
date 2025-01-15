@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use App\Controller\dto\CompanyDto;
 use App\Entity\Company;
+use App\Entity\ExperienceRecord;
+use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,5 +86,42 @@ class ApiCompanyController extends AbstractController
         return $this->json(
             $companiesAsDto
         );
+    }
+
+    #[Route('/api/protected/add-an-employee', name: 'api_add_employee', methods: ['POST'])]
+    public function addEmployee(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $content = $request->getContent();
+        $jsonData = json_decode($content, true);
+
+        $company = $doctrine->getRepository(Company::class)->find($jsonData['companyId']);
+
+        $employee = $doctrine->getRepository(User::class)->find($jsonData['userId']);
+
+        $experienceRecord = new ExperienceRecord();
+        $experienceRecord->setUser($employee);
+        $experienceRecord->setTitle($jsonData["experienceRecord"]['title']);
+        $experienceRecord->setStartDate($this->convertDate($jsonData["experienceRecord"]['startDate']));
+        $experienceRecord->setEndDate($this->convertDate($jsonData["experienceRecord"]['endDate']));
+        $experienceRecord->setDescription($jsonData["experienceRecord"]['description']);
+        $experienceRecord->setCompany($company);
+
+        $employee->addExperienceRecord($experienceRecord);
+
+        $em = $doctrine->getManager();
+        $em->persist($experienceRecord);
+        $em->persist($employee);
+        $em->flush();
+
+        return $this->json([
+            'message' => 'Employee added'
+        ]);
+    }
+
+    //convert dd/mm/yyyy to timestamp
+    private function convertDate($date): int
+    {
+        $date = explode('/', $date);
+        return mktime(0, 0, 0, (int) $date[1], (int) $date[0], (int) $date[2]);
     }
 }

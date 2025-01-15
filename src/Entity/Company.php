@@ -42,8 +42,15 @@ class Company
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'companies')]
     private $admins;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'workExperiences')]
-    private $employees;
+    #[ORM\OneToMany(targetEntity: ExperienceRecord::class, mappedBy: 'company')]
+    private $experienceRecords;
+
+
+    public function __construct()
+    {
+        $this->admins = new ArrayCollection();
+        $this->experienceRecords = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -189,31 +196,13 @@ class Company
         return $this->employees;
     }
 
-    /**
-     * @param mixed $employees
-     */
-    public function setEmployees($employees): void
+    public function getExperienceRecords(): ArrayCollection
     {
-        $this->employees = $employees;
+        return $this->experienceRecords;
     }
 
-    public function addEmployee(User $user): static
+    public function setExperienceRecords(ArrayCollection $experienceRecords): void
     {
-        if($this->employees === null) {
-            $this->employees = new ArrayCollection();
-        }
-        if (!$this->employees->contains($user)) {
-            $this->employees[] = $user;
-        }
-
-        return $this;
+        $this->experienceRecords = $experienceRecords;
     }
-
-    public function removeEmployee(User $user): static
-    {
-        $this->employees->removeElement($user);
-
-        return $this;
-    }
-
 }
