@@ -118,6 +118,24 @@ class ApiCompanyController extends AbstractController
         ]);
     }
 
+    #[Route('/api/protected/company/add-ethereum-wallet', name: 'api_add_ethereum_wallet', methods: ['POST'])]
+    public function addEthereumWallet(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $content = $request->getContent();
+        $jsonData = json_decode($content, true);
+
+        $company = $doctrine->getRepository(Company::class)->find($jsonData['companyId']);
+
+        $company->setEthereumAddress($jsonData['address']);
+
+        $doctrine->getManager()->persist($company);
+        $doctrine->getManager()->flush();
+
+        return $this->json([
+            'message' => 'Ethereum wallet set'
+        ]);
+    }
+
     //convert dd/mm/yyyy to timestamp
     private function convertDate($date): int
     {

@@ -15,6 +15,7 @@ class CompanyDto
     private ?string $addressCountry = null;
     private ?string $email = null;
     private ?string $phoneNumber = null;
+    private ?string $ethereumAddress = null;
 
     public function __construct(Company $company) {
         $this->id = $company->getId();
@@ -26,6 +27,7 @@ class CompanyDto
         $this->addressCountry = $company->getAddressCountry();
         $this->email = $company->getEmail();
         $this->phoneNumber = $company->getPhoneNumber();
+        $this->ethereumAddress = $company->getEthereumAddress();
     }
 
     public function getId(): ?int
@@ -118,6 +120,13 @@ class CompanyDto
         $this->phoneNumber = $phoneNumber;
     }
 
+    public function getEthereumAddress(): ?string
+    {
+        return $this->ethereumAddress;
+    }
 
-
+    public function setEthereumAddress(?string $ethereumAddress): void
+    {
+        $this->ethereumAddress = $ethereumAddress;
+    }
 }

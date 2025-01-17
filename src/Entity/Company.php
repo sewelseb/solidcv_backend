@@ -45,6 +45,9 @@ class Company
     #[ORM\OneToMany(targetEntity: ExperienceRecord::class, mappedBy: 'company')]
     private $experienceRecords;
 
+    #[ORM\Column(nullable: true)]
+    private $ethereumAddress;
+
 
     public function __construct()
     {
@@ -205,4 +208,22 @@ class Company
     {
         $this->experienceRecords = $experienceRecords;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getEthereumAddress()
+    {
+        return $this->ethereumAddress;
+    }
+
+    /**
+     * @param mixed $ethereumAddress
+     */
+    public function setEthereumAddress($ethereumAddress): void
+    {
+        $this->ethereumAddress = $ethereumAddress;
+    }
+
+
 }
