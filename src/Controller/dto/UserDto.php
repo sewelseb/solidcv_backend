@@ -11,6 +11,7 @@ class UserDto
     private ?string $firstName = null;
     private ?string $lastName = null;
     private ?string $phoneNumber = null;
+    private ?string $ethereumAddress = null;
 
     public function __construct(User $user)
     {
@@ -19,6 +20,7 @@ class UserDto
         $this->firstName = $user->getFirstName();
         $this->lastName = $user->getLastName();
         $this->phoneNumber = $user->getPhoneNumber();
+        $this->ethereumAddress = $user->getEthereumAddress();
 
     }
 
@@ -71,4 +73,16 @@ class UserDto
     {
         $this->phoneNumber = $phoneNumber;
     }
+
+    public function getEthereumAddress(): ?string
+    {
+        return $this->ethereumAddress;
+    }
+
+    public function setEthereumAddress(?string $ethereumAddress): void
+    {
+        $this->ethereumAddress = $ethereumAddress;
+    }
+
+
 }

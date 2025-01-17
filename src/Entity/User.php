@@ -58,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private $apiToken;
 
+    #[ORM\Column(nullable: true)]
+    private $ethereumAddress;
+
     //one user can be the admin of many companies and many companies can have many admins
     #[ORM\ManyToMany(targetEntity: Company::class, inversedBy: 'admins', cascade: ["persist"])]
     #[ORM\JoinTable(name: 'company_admins')]
@@ -329,6 +332,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getEthereumAddress()
+    {
+        return $this->ethereumAddress;
+    }
+
+    /**
+     * @param mixed $ethereumAddress
+     */
+    public function setEthereumAddress($ethereumAddress): void
+    {
+        $this->ethereumAddress = $ethereumAddress;
+    }
+
 
 
 }
