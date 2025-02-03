@@ -31,6 +31,7 @@ security:
         - { path: ^/api/protected/isLoggedIn, roles: ROLE_USER }
         - { path: ^/api/protected/*, roles: ROLE_USER }
         - { path: ^/api/admin, roles: ROLE_ADMIN }
+        - { path: ^/api/admin/*, roles: ROLE_ADMIN }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

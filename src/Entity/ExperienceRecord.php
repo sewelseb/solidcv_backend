@@ -28,6 +28,9 @@ class ExperienceRecord
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $ethereumToken = null;
+
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'experienceRecords')]
     private $user;
 
@@ -126,6 +129,17 @@ class ExperienceRecord
     {
         $this->company = $company;
     }
+
+    public function getEthereumToken(): ?string
+    {
+        return $this->ethereumToken;
+    }
+
+    public function setEthereumToken(?string $ethereumToken): void
+    {
+        $this->ethereumToken = $ethereumToken;
+    }
+
 
 
 }

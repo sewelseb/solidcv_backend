@@ -102,8 +102,11 @@ class ApiCompanyController extends AbstractController
         $experienceRecord->setUser($employee);
         $experienceRecord->setTitle($jsonData["experienceRecord"]['title']);
         $experienceRecord->setStartDate($this->convertDate($jsonData["experienceRecord"]['startDate']));
-        $experienceRecord->setEndDate($this->convertDate($jsonData["experienceRecord"]['endDate']));
+        if($jsonData["experienceRecord"]['endDate'] != null && $jsonData["experienceRecord"]['endDate'] != ''){
+            $experienceRecord->setEndDate($this->convertDate($jsonData["experienceRecord"]['endDate']));
+        }
         $experienceRecord->setDescription($jsonData["experienceRecord"]['description']);
+        $experienceRecord->setEthereumToken($jsonData["experienceRecord"]['ethereumToken']);
         $experienceRecord->setCompany($company);
 
         $employee->addExperienceRecord($experienceRecord);

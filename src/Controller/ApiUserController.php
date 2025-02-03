@@ -21,6 +21,16 @@ class ApiUserController extends AbstractController
         );
     }
 
+    #[Route('/api/protected/get-user/{id}', name: 'api_get_user')]
+    public function getUserById($id, Request $request, ManagerRegistry $doctrine): Response
+    {
+        $user = $doctrine->getRepository(User::class)->find($id);
+
+        return $this->json(
+            new UserDto($user)
+        );
+    }
+
     #[Route('/api/protected/search-user', name: 'api_search_user', methods: ['POST'])]
     public function searchUser(Request $request, ManagerRegistry $doctrine): Response
     {
