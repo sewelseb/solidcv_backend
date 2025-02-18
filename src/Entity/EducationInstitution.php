@@ -42,6 +42,9 @@ class EducationInstitution
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'educationInstitutions')]
     private $admins;
 
+    #[ORM\Column(nullable: true)]
+    private $ethereumAddress;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -158,4 +161,22 @@ class EducationInstitution
     {
         $this->admins->removeElement($user);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getEthereumAddress()
+    {
+        return $this->ethereumAddress;
+    }
+
+    /**
+     * @param mixed $ethereumAddress
+     */
+    public function setEthereumAddress($ethereumAddress): void
+    {
+        $this->ethereumAddress = $ethereumAddress;
+    }
+
+
 }

@@ -61,4 +61,21 @@ class ApiEducationInstitution extends AbstractController
 
         return $this->json($educationInstitutionDtos);
     }
+
+    #[Route('/api/protected/education-institution/set-ethereum-address', name: 'api_set_ethereum_address', methods: ['POST'])]
+    public function setEthereumAddress(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $content = $request->getContent();
+        $jsonData = json_decode($content, true);
+        $educationInstitution = $doctrine->getRepository(EducationInstitution::class)->find($jsonData['id']);
+
+        $educationInstitution->setEthereumAddress($jsonData['address']);
+
+        $doctrine->getManager()->persist($educationInstitution);
+        $doctrine->getManager()->flush();
+
+        return $this->json([
+            'message' => 'Ethereum address set'
+        ]);
+    }
 }
