@@ -69,7 +69,7 @@ class ApiEducationInstitution extends AbstractController
         $jsonData = json_decode($content, true);
         $educationInstitution = $doctrine->getRepository(EducationInstitution::class)->find($jsonData['id']);
 
-        $educationInstitution->setEthereumAddress($jsonData['address']);
+        $educationInstitution->setEthereumAddress($jsonData['ethereumAddress']);
 
         $doctrine->getManager()->persist($educationInstitution);
         $doctrine->getManager()->flush();

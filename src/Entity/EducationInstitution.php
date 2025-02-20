@@ -45,6 +45,9 @@ class EducationInstitution
     #[ORM\Column(nullable: true)]
     private $ethereumAddress;
 
+    #[ORM\OneToMany(targetEntity: Certificate::class, mappedBy: 'educationInstitution')]
+    private $certificates;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -178,5 +181,29 @@ class EducationInstitution
         $this->ethereumAddress = $ethereumAddress;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCertificates()
+    {
+        return $this->certificates;
+    }
+
+    /**
+     * @param mixed $certificates
+     */
+    public function setCertificates($certificates): void
+    {
+        $this->certificates = $certificates;
+    }
+
+    public function addCertificate(Certificate $certificate): void
+    {
+        if ($this->certificates->contains($certificate)) {
+            return;
+        }
+        $this->certificates[] = $certificate;
+        $certificate->setEducationInstitution($this);
+    }
 
 }

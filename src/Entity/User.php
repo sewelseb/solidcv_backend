@@ -74,6 +74,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: ExperienceRecord::class, mappedBy: 'user')]
     private $experienceRecords;
 
+    #[ORM\OneToMany(targetEntity: Certificate::class, mappedBy: 'user')]
+    private $certificates;
+
 
     public function __construct()
     {
@@ -347,6 +350,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEthereumAddress($ethereumAddress): void
     {
         $this->ethereumAddress = $ethereumAddress;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCertificates()
+    {
+        return $this->certificates;
+    }
+
+    /**
+     * @param mixed $certificates
+     */
+    public function setCertificates($certificates): void
+    {
+        $this->certificates = $certificates;
+    }
+
+
+
+    public function addCertificate(Certificate $certificate): self
+    {
+        if (!$this->certificates->contains($certificate)) {
+            $this->certificates[] = $certificate;
+            $certificate->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCertificate(Certificate $certificate): self
+    {
+        $this->certificates->removeElement($certificate);
+
+        return $this;
     }
 
 

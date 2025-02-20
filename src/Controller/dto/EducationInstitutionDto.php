@@ -16,6 +16,7 @@ class EducationInstitutionDto
     private ?string $addressCountry = null;
     private ?string $email = null;
     private ?string $phoneNumber = null;
+    private ?string $ethereumAddress = null;
 
     public function __construct(EducationInstitution $educationInstitution) {
         $this->id = $educationInstitution->getId();
@@ -27,6 +28,7 @@ class EducationInstitutionDto
         $this->addressCountry = $educationInstitution->getAddressCountry();
         $this->email = $educationInstitution->getEmail();
         $this->phoneNumber = $educationInstitution->getPhoneNumber();
+        $this->ethereumAddress = $educationInstitution->getEthereumAddress();
     }
 
     public function getId(): ?int
@@ -117,5 +119,15 @@ class EducationInstitutionDto
     public function setPhoneNumber(?string $phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
+    }
+
+    public function getEthereumAddress(): ?string
+    {
+        return $this->ethereumAddress;
+    }
+
+    public function setEthereumAddress(?string $ethereumAddress): void
+    {
+        $this->ethereumAddress = $ethereumAddress;
     }
 }
