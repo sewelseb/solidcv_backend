@@ -77,12 +77,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Certificate::class, mappedBy: 'user')]
     private $certificates;
 
+    /**
+     * @var Collection<int, ManuallyAddedWorkExperience>
+     */
+    #[ORM\OneToMany(targetEntity: ManuallyAddedWorkExperience::class, mappedBy: 'user')]
+    private Collection $manuallyAddedWorkExperiences;
+
 
     public function __construct()
     {
         $this->companies = new ArrayCollection();
         $this->educationInstitutions = new ArrayCollection();
         $this->experienceRecords = new ArrayCollection();
+        $this->manuallyAddedWorkExperiences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -383,6 +390,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCertificate(Certificate $certificate): self
     {
         $this->certificates->removeElement($certificate);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ManuallyAddedWorkExperience>
+     */
+    public function getManuallyAddedWorkExperiences(): Collection
+    {
+        return $this->manuallyAddedWorkExperiences;
+    }
+
+    public function addManuallyAddedWorkExperience(ManuallyAddedWorkExperience $manuallyAddedWorkExperience): static
+    {
+        if (!$this->manuallyAddedWorkExperiences->contains($manuallyAddedWorkExperience)) {
+            $this->manuallyAddedWorkExperiences->add($manuallyAddedWorkExperience);
+            $manuallyAddedWorkExperience->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeManuallyAddedWorkExperience(ManuallyAddedWorkExperience $manuallyAddedWorkExperience): static
+    {
+        if ($this->manuallyAddedWorkExperiences->removeElement($manuallyAddedWorkExperience)) {
+            // set the owning side to null (unless already changed)
+            if ($manuallyAddedWorkExperience->getUser() === $this) {
+                $manuallyAddedWorkExperience->setUser(null);
+            }
+        }
 
         return $this;
     }

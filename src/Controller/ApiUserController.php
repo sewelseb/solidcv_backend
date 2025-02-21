@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Controller;
+use App\Controller\dto\ManuallyAddedWorkExperienceDto;
 use App\Controller\dto\UserDto;
+use App\Entity\ManuallyAddedWorkExperience;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -65,5 +67,43 @@ class ApiUserController extends AbstractController
         return $this->json([
             'message' => 'Ethereum wallet set'
         ]);
+    }
+
+    #[Route('/api/protected/add-manually-a-work-experience', name: 'api_add_manually_a_work_experience', methods: ['POST'])]
+    public function addManuallyAWorkExperience(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $content = $request->getContent();
+        $jsonData = json_decode($content, true);
+
+        $experienceRecord = new ManuallyAddedWorkExperience();
+        $experienceRecord->setTitle($jsonData['title']);
+        $experienceRecord->setLocation($jsonData['location']);
+        $experienceRecord->setStartDate($jsonData['startDateAsTimestamp']);
+        $experienceRecord->setEndDate($jsonData['endDateAsTimestamp']);
+        $experienceRecord->setDescription($jsonData['description']);
+        $experienceRecord->setUser($this->getUser());
+
+
+        $em = $doctrine->getManager();
+        $em->persist($experienceRecord);
+        $em->persist($this->getUser());
+        $em->flush();
+
+        return $this->json([
+            'message' => 'Work experience added'
+        ]);
+    }
+
+    #[Route('/api/protected/get-my-manually-added-work-experience', name: 'api_get_my_manyally_added_work_experience')]
+    public function getMyManuallyAddedWorkExperience(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $workExperiences = $this->getUser()->getManuallyAddedWorkExperiences();
+
+        $workExperiencesDto = [];
+        foreach ($workExperiences as $workExperience) {
+            $workExperiencesDto[] = new ManuallyAddedWorkExperienceDto($workExperience);
+        }
+
+        return $this->json($workExperiencesDto);
     }
 }
