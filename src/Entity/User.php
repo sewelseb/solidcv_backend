@@ -83,6 +83,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: ManuallyAddedWorkExperience::class, mappedBy: 'user')]
     private Collection $manuallyAddedWorkExperiences;
 
+    /**
+     * @var Collection<int, ManuallyAddedCertification>
+     */
+    #[ORM\OneToMany(targetEntity: ManuallyAddedCertification::class, mappedBy: 'user')]
+    private Collection $manuallyAddedCertifications;
+
 
     public function __construct()
     {
@@ -90,6 +96,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->educationInstitutions = new ArrayCollection();
         $this->experienceRecords = new ArrayCollection();
         $this->manuallyAddedWorkExperiences = new ArrayCollection();
+        $this->manuallyAddedCertifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -418,6 +425,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($manuallyAddedWorkExperience->getUser() === $this) {
                 $manuallyAddedWorkExperience->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ManuallyAddedCertification>
+     */
+    public function getManuallyAddedCertifications(): Collection
+    {
+        return $this->manuallyAddedCertifications;
+    }
+
+    public function addManuallyAddedCertification(ManuallyAddedCertification $manuallyAddedCertification): static
+    {
+        if (!$this->manuallyAddedCertifications->contains($manuallyAddedCertification)) {
+            $this->manuallyAddedCertifications->add($manuallyAddedCertification);
+            $manuallyAddedCertification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeManuallyAddedCertification(ManuallyAddedCertification $manuallyAddedCertification): static
+    {
+        if ($this->manuallyAddedCertifications->removeElement($manuallyAddedCertification)) {
+            // set the owning side to null (unless already changed)
+            if ($manuallyAddedCertification->getUser() === $this) {
+                $manuallyAddedCertification->setUser(null);
             }
         }
 

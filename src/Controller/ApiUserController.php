@@ -3,6 +3,7 @@
 namespace App\Controller;
 use App\Controller\dto\ManuallyAddedWorkExperienceDto;
 use App\Controller\dto\UserDto;
+use App\Entity\ManuallyAddedCertification;
 use App\Entity\ManuallyAddedWorkExperience;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
@@ -94,6 +95,37 @@ class ApiUserController extends AbstractController
         ]);
     }
 
+    #[Route('/api/protected/add-manually-a-certification', name: 'api_add_manually_a_certification', methods: ['POST'])]
+    public function addManuallyACertification(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $content = $request->getContent();
+        $jsonData = json_decode($content, true);
+
+        $certification = new ManuallyAddedCertification();
+        $certification->setTitle($jsonData['title']);
+        $certification->setCuriculum($jsonData['curriculum']);
+        $certification->setType($jsonData['type']);
+        $certification->setUser($this->getUser());
+        $certification->setDescritpion($jsonData['description']);
+        $certification->setGrade($jsonData['grade']);
+        $certification->setPublicationDate($jsonData['publicationDateAsTimestamp']);
+
+        //decode file and save it
+        $file = base64_decode($jsonData['file']);
+        $extention = $jsonData["fileExtention"];
+        $certification->setFile($this->saveQuoteFile($file, $extention, $this->getUser()));
+
+        $em = $doctrine->getManager();
+        $em->persist($certification);
+        $em->persist($this->getUser());
+        $em->flush();
+
+        return $this->json([
+            'message' => 'Certification added'
+        ]);
+
+    }
+
     #[Route('/api/protected/get-my-manually-added-work-experience', name: 'api_get_my_manyally_added_work_experience')]
     public function getMyManuallyAddedWorkExperience(Request $request, ManagerRegistry $doctrine): Response
     {
@@ -105,5 +137,19 @@ class ApiUserController extends AbstractController
         }
 
         return $this->json($workExperiencesDto);
+    }
+
+    private function saveQuoteFile(bool|string $file, string $extention, User $user): string
+    {
+
+        $fileName = $user->getId() . '-' . time() . '.' . $extention;
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $filePath = 'C:\repos\solidcv\solidcv_backend\public\assets\cetrificates' . '\\' . $fileName;
+        } else {
+            $filePath = 'assets/cetrificates' . '/' . $fileName;
+        }
+        file_put_contents($filePath, $file);
+
+        return $fileName;
     }
 }
