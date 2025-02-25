@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use App\Controller\dto\ManuallyAddedCertificationDto;
 use App\Controller\dto\ManuallyAddedWorkExperienceDto;
 use App\Controller\dto\UserDto;
 use App\Entity\ManuallyAddedCertification;
@@ -137,6 +138,21 @@ class ApiUserController extends AbstractController
         }
 
         return $this->json($workExperiencesDto);
+    }
+
+    #[Route('/api/protected/get-my-manually-added-certificates', name: 'api_get_my_manually_added_certificates')]
+    public function getMyManuallyAddedCertificates(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $user = $this->getUser();
+        /** User $user */
+        $certificates = $user->getManuallyAddedCertifications();
+
+        $certificatesDto = [];
+        foreach ($certificates as $certificate) {
+            $certificatesDto[] = new ManuallyAddedCertificationDto($certificate);
+        }
+
+        return $this->json($certificatesDto);
     }
 
     private function saveQuoteFile(bool|string $file, string $extention, User $user): string
